@@ -1,8 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import GlassCard from "./GlassCard";
 import { api } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 import { toLocalDateString } from "../utils/date";
+import { processRecurringBills } from "../utils/recurring";
+
+const FREQUENCIES = [
+  { value: "none", label: "One-time" },
+  { value: "weekly", label: "Weekly" },
+  { value: "monthly", label: "Monthly" },
+  { value: "yearly", label: "Yearly" },
+];
+
+function frequencyLabel(value) {
+  return FREQUENCIES.find((f) => f.value === value)?.label || "One-time";
+}
 
 function daysUntil(dueDate) {
   const today = new Date();
@@ -36,7 +48,14 @@ function BillRow({ bill, onRemove }) {
   return (
     <li className="flex items-center justify-between gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm">
       <div className="min-w-0">
-        <p className="truncate text-slate-100">{bill.name}</p>
+        <p className="truncate text-slate-100">
+          {bill.name}
+          {bill.frequency && bill.frequency !== "none" && (
+            <span className="ml-1.5 rounded-full border border-indigo-400/30 bg-indigo-500/10 px-1.5 py-0.5 text-[10px] text-indigo-300">
+              {frequencyLabel(bill.frequency)}
+            </span>
+          )}
+        </p>
         <p className={`text-xs ${days < 0 ? "text-rose-300" : "text-slate-400"}`}>
           {dueLabel(days)}
           {bill.amount > 0 && ` · ₱${bill.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
@@ -55,15 +74,27 @@ export default function UpcomingPayments({ bills, onChange }) {
   const [name, setName] = useState("");
   const [dueDate, setDueDate] = useState(toLocalDateString());
   const [amount, setAmount] = useState("");
+  const [frequency, setFrequency] = useState("none");
 
   const { overdue, tomorrow, thisWeek } = groupBills(bills);
+
+  useEffect(() => {
+    if (bills.length === 0) return;
+    processRecurringBills(token, bills).then((changed) => {
+      if (changed) onChange();
+    });
+    // Re-run whenever the bill list itself changes (new/removed bills, or
+    // a previous pass advancing a due date) — settles once nothing is due.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bills]);
 
   async function submit(e) {
     e.preventDefault();
     if (!name.trim()) return;
-    await api.createBill(token, { name: name.trim(), dueDate, amount: Number(amount) || 0 });
+    await api.createBill(token, { name: name.trim(), dueDate, amount: Number(amount) || 0, frequency });
     setName("");
     setAmount("");
+    setFrequency("none");
     setAdding(false);
     onChange();
   }
@@ -109,6 +140,17 @@ export default function UpcomingPayments({ bills, onChange }) {
               className="w-28 min-w-0 rounded-lg border border-white/15 bg-white/5 px-2 py-1.5 text-sm outline-none focus:border-indigo-400"
             />
           </div>
+          <select
+            value={frequency}
+            onChange={(e) => setFrequency(e.target.value)}
+            className="w-full min-w-0 rounded-lg border border-white/15 bg-white/10 px-2 py-1.5 text-sm text-slate-200 outline-none focus:border-indigo-400"
+          >
+            {FREQUENCIES.map((f) => (
+              <option key={f.value} value={f.value} className="bg-slate-800">
+                {f.label}
+              </option>
+            ))}
+          </select>
           <button type="submit" className="rounded-lg bg-indigo-500 px-3 py-1.5 text-sm hover:bg-indigo-400">
             Add
           </button>

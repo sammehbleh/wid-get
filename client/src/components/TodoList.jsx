@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import GlassCard from "./GlassCard";
 import { api } from "../api/client";
 import { useAuth } from "../context/AuthContext";
+import { BUDGET_CATEGORIES } from "../data/budget";
+import { toLocalDateString } from "../utils/date";
 
 const PRIORITIES = [
   { value: "high", label: "High", dot: "bg-rose-500", chip: "border-rose-400/40 bg-rose-500/10 text-rose-300" },
@@ -19,6 +21,11 @@ export default function TodoList({ className = "" }) {
   const [text, setText] = useState("");
   const [priority, setPriority] = useState("medium");
 
+  const [linkExpense, setLinkExpense] = useState(false);
+  const [expenseAmount, setExpenseAmount] = useState("");
+  const [expenseCategory, setExpenseCategory] = useState("Bills");
+  const [expensePaymentSource, setExpensePaymentSource] = useState("");
+
   useEffect(() => {
     api.listTodos(token).then(setTodos).catch(() => setTodos([]));
   }, [token]);
@@ -26,13 +33,38 @@ export default function TodoList({ className = "" }) {
   async function addTodo(e) {
     e.preventDefault();
     if (!text.trim()) return;
-    const created = await api.createTodo(token, { text: text.trim(), priority });
+    const created = await api.createTodo(token, {
+      text: text.trim(),
+      priority,
+      linkExpense,
+      expenseAmount: linkExpense ? Number(expenseAmount) || 0 : 0,
+      expenseCategory,
+      expensePaymentSource: expensePaymentSource.trim(),
+    });
     setTodos((prev) => [created, ...prev]);
     setText("");
+    setLinkExpense(false);
+    setExpenseAmount("");
+    setExpensePaymentSource("");
   }
 
   async function toggleDone(todo) {
-    const updated = await api.updateTodo(token, todo._id, { done: !todo.done });
+    const nextDone = !todo.done;
+
+    if (nextDone && todo.linkExpense && !todo.expenseRecorded) {
+      await api.createTransaction(token, {
+        date: toLocalDateString(),
+        category: todo.expenseCategory,
+        description: todo.text,
+        expense: todo.expenseAmount,
+        paymentSource: todo.expensePaymentSource,
+      });
+      const updated = await api.updateTodo(token, todo._id, { done: true, expenseRecorded: true });
+      setTodos((prev) => prev.map((t) => (t._id === updated._id ? updated : t)));
+      return;
+    }
+
+    const updated = await api.updateTodo(token, todo._id, { done: nextDone });
     setTodos((prev) => prev.map((t) => (t._id === updated._id ? updated : t)));
   }
 
@@ -71,6 +103,48 @@ export default function TodoList({ className = "" }) {
             Add
           </button>
         </div>
+
+        <label className="flex items-center gap-2 text-xs text-slate-300">
+          <input
+            type="checkbox"
+            checked={linkExpense}
+            onChange={(e) => setLinkExpense(e.target.checked)}
+            className="h-3.5 w-3.5 rounded border-white/30 bg-white/10"
+          />
+          Add as expense when completed
+        </label>
+
+        {linkExpense && (
+          <div className="space-y-2 rounded-lg border border-white/10 bg-white/[0.03] p-2">
+            <div className="flex gap-2">
+              <select
+                value={expenseCategory}
+                onChange={(e) => setExpenseCategory(e.target.value)}
+                className="min-w-0 flex-1 rounded-lg border border-white/15 bg-white/10 px-2 py-1 text-xs text-slate-200 outline-none focus:border-indigo-400"
+              >
+                {BUDGET_CATEGORIES.map((c) => (
+                  <option key={c} value={c} className="bg-slate-800">
+                    {c}
+                  </option>
+                ))}
+              </select>
+              <input
+                value={expenseAmount}
+                onChange={(e) => setExpenseAmount(e.target.value)}
+                type="number"
+                step="0.01"
+                placeholder="Amount"
+                className="w-20 min-w-0 rounded-lg border border-white/15 bg-white/5 px-2 py-1 text-xs outline-none focus:border-indigo-400"
+              />
+            </div>
+            <input
+              value={expensePaymentSource}
+              onChange={(e) => setExpensePaymentSource(e.target.value)}
+              placeholder="Payment source (optional)"
+              className="w-full min-w-0 rounded-lg border border-white/15 bg-white/5 px-2 py-1 text-xs outline-none focus:border-indigo-400"
+            />
+          </div>
+        )}
       </form>
 
       <ul className="mt-3 min-h-0 flex-1 space-y-2 overflow-y-auto">
@@ -90,6 +164,14 @@ export default function TodoList({ className = "" }) {
                 <span className={t.done ? "text-slate-500 line-through" : "text-slate-200"}>
                   {t.text}
                 </span>
+                {t.linkExpense && (
+                  <span
+                    title={`Logs ₱${t.expenseAmount} to ${t.expenseCategory} when completed`}
+                    className="text-xs text-emerald-300"
+                  >
+                    ₱
+                  </span>
+                )}
               </label>
               <div className="flex items-center gap-2">
                 <span className={`rounded-full border px-2 py-0.5 text-[10px] ${meta.chip}`}>
