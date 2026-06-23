@@ -39,22 +39,20 @@ export default function Dashboard() {
       <BackgroundLayer />
       <Navbar />
 
-      <main className="flex w-full flex-1 flex-col px-8 py-8">
-        <header className="mb-10 flex items-center justify-between gap-6">
-          <div>
-            <h1 className="font-greeting text-5xl font-bold tracking-tight lg:text-6xl">
+      <main className="flex w-full flex-1 flex-col px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+        <header className="mb-8 grid grid-cols-1 gap-4 sm:mb-10 sm:grid-cols-3 sm:items-center sm:gap-6">
+          <div className="sm:col-span-2">
+            <h1 className="font-greeting text-3xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
               Welcome back, {firstName}!
             </h1>
-            <p className="mt-4 max-w-2xl text-lg italic text-slate-300 lg:text-xl">
+            <p className="mt-3 max-w-2xl text-base italic text-slate-300 sm:mt-4 sm:text-lg lg:text-xl">
               "{quote}"
             </p>
           </div>
-          <div className="flex shrink-0 items-center gap-3">
-            <MusicRecommendation className="w-full max-w-xs lg:w-80" />
-          </div>
+          <MusicRecommendation className="w-full" />
         </header>
 
-        <div className="mb-4 flex items-center justify-between gap-3">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <button
             onClick={() => setEditMode((v) => !v)}
             className={`rounded-lg border px-3 py-1.5 text-sm transition ${
@@ -67,7 +65,7 @@ export default function Dashboard() {
           </button>
 
           {editMode && (
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={cycleNotepadSize}
                 className="rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-slate-200 hover:bg-white/10"
