@@ -12,6 +12,7 @@ import eventRoutes from "./routes/events.js";
 import transactionRoutes from "./routes/transactions.js";
 import budgetLimitRoutes from "./routes/budgetLimits.js";
 import billRoutes from "./routes/bills.js";
+import savingsGoalRoutes from "./routes/savingsGoals.js";
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use("/api/events", eventRoutes);
 app.use("/api/transactions", transactionRoutes);
 app.use("/api/budget-limits", budgetLimitRoutes);
 app.use("/api/bills", billRoutes);
+app.use("/api/savings-goals", savingsGoalRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err);

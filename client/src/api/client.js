@@ -72,4 +72,10 @@ export const api = {
   createBill: (token, data) => request("/bills", { method: "POST", body: data, token }),
   updateBill: (token, id, data) => request(`/bills/${id}`, { method: "PATCH", body: data, token }),
   deleteBill: (token, id) => request(`/bills/${id}`, { method: "DELETE", token }),
+
+  listSavingsGoals: (token) => request("/savings-goals", { token }),
+  createSavingsGoal: (token, data) => request("/savings-goals", { method: "POST", body: data, token }),
+  updateSavingsGoal: (token, id, data) =>
+    request(`/savings-goals/${id}`, { method: "PATCH", body: data, token }),
+  deleteSavingsGoal: (token, id) => request(`/savings-goals/${id}`, { method: "DELETE", token }),
 };

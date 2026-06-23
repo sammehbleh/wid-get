@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import GlassCard from "./GlassCard";
 import { BUDGET_CATEGORIES } from "../data/budget";
-import { buildInsights } from "../utils/insights";
+import { buildInsights, categoryBreakdown, lastNMonths } from "../utils/insights";
 import { api } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 
@@ -11,12 +11,28 @@ const TYPE_STYLE = {
   info: "border-indigo-400/30 bg-indigo-500/10 text-indigo-200",
 };
 
+function formatMoney(n) {
+  return `₱${Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+}
+
+function limitColors(pct) {
+  if (pct > 90) return { bar: "bg-rose-400", text: "text-rose-300" };
+  if (pct >= 70) return { bar: "bg-amber-400", text: "text-amber-300" };
+  return { bar: "bg-emerald-400", text: "text-emerald-300" };
+}
+
 export default function FinancialInsights({ transactions, budgetLimits, onChange }) {
   const { token } = useAuth();
   const [category, setCategory] = useState(BUDGET_CATEGORIES[0]);
   const [limit, setLimit] = useState("");
 
   const insights = buildInsights(transactions, budgetLimits);
+
+  const spentByCategory = useMemo(() => {
+    const thisMonth = lastNMonths(1)[0];
+    const breakdown = categoryBreakdown(transactions, thisMonth);
+    return new Map(breakdown.map((b) => [b.category, b.total]));
+  }, [transactions]);
 
   async function saveLimit(e) {
     e.preventDefault();
@@ -58,21 +74,42 @@ export default function FinancialInsights({ transactions, budgetLimits, onChange
 
       <div className="mt-4 border-t border-white/10 pt-3">
         <p className="text-xs font-medium text-slate-300">Budget Limits</p>
-        <ul className="mt-2 space-y-1.5">
+        <ul className="mt-2 space-y-3">
           {budgetLimits.length === 0 && (
             <li className="text-xs text-slate-400">No limits set yet</li>
           )}
-          {budgetLimits.map((l) => (
-            <li key={l._id} className="flex items-center justify-between text-xs text-slate-200">
-              <span>{l.category}</span>
-              <div className="flex items-center gap-2">
-                <span>₱{l.limit.toLocaleString()}</span>
-                <button onClick={() => removeLimit(l._id)} className="text-slate-500 hover:text-rose-400">
-                  ✕
-                </button>
-              </div>
-            </li>
-          ))}
+          {budgetLimits.map((l) => {
+            const used = spentByCategory.get(l.category) || 0;
+            const remaining = l.limit - used;
+            const pct = l.limit > 0 ? Math.min(100, (used / l.limit) * 100) : 0;
+            const colors = limitColors(l.limit > 0 ? (used / l.limit) * 100 : 0);
+            return (
+              <li key={l._id} className="rounded-lg border border-white/10 bg-white/[0.03] p-2.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-medium text-slate-200">{l.category}</span>
+                  <button onClick={() => removeLimit(l._id)} className="text-slate-500 hover:text-rose-400">
+                    ✕
+                  </button>
+                </div>
+
+                <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+                  <div
+                    className={`h-full rounded-full transition-all ${colors.bar}`}
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+
+                <div className="mt-1.5 flex items-center justify-between text-[11px] text-slate-400">
+                  <span>
+                    Used {formatMoney(used)} of {formatMoney(l.limit)}
+                  </span>
+                  <span className={colors.text}>
+                    {remaining >= 0 ? `${formatMoney(remaining)} left` : `${formatMoney(-remaining)} over`}
+                  </span>
+                </div>
+              </li>
+            );
+          })}
         </ul>
 
         <form onSubmit={saveLimit} className="mt-2 flex gap-2">

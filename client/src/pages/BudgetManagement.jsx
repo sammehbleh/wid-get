@@ -7,6 +7,7 @@ import BudgetTracker from "../components/BudgetTracker";
 import FinancialAnalytics from "../components/FinancialAnalytics";
 import FinancialInsights from "../components/FinancialInsights";
 import UpcomingPayments from "../components/UpcomingPayments";
+import SavingsGoals from "../components/SavingsGoals";
 import { ACCOUNT_GROUPS } from "../data/accounts";
 import { api } from "../api/client";
 import { useAuth } from "../context/AuthContext";
@@ -17,19 +18,22 @@ export default function BudgetManagement() {
   const [transactions, setTransactions] = useState([]);
   const [budgetLimits, setBudgetLimits] = useState([]);
   const [bills, setBills] = useState([]);
+  const [savingsGoals, setSavingsGoals] = useState([]);
   const [loaded, setLoaded] = useState(false);
 
   const refresh = useCallback(async () => {
-    const [accountsData, transactionsData, budgetLimitsData, billsData] = await Promise.all([
+    const [accountsData, transactionsData, budgetLimitsData, billsData, savingsGoalsData] = await Promise.all([
       api.listAccounts(token),
       api.listTransactions(token),
       api.listBudgetLimits(token),
       api.listBills(token),
+      api.listSavingsGoals(token),
     ]);
     setAccounts(accountsData);
     setTransactions(transactionsData);
     setBudgetLimits(budgetLimitsData);
     setBills(billsData);
+    setSavingsGoals(savingsGoalsData);
     setLoaded(true);
   }, [token]);
 
@@ -78,16 +82,17 @@ export default function BudgetManagement() {
               onChange={refresh}
             />
 
-            <FinancialAnalytics transactions={transactions} />
-
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
               <FinancialInsights
                 transactions={transactions}
                 budgetLimits={budgetLimits}
                 onChange={refresh}
               />
               <UpcomingPayments bills={bills} onChange={refresh} />
+              <SavingsGoals goals={savingsGoals} onChange={refresh} />
             </div>
+
+            <FinancialAnalytics transactions={transactions} />
           </>
         )}
       </main>
