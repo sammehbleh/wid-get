@@ -15,12 +15,12 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-20 border-b border-white/10 bg-white/5 backdrop-blur-xl">
       <div className="flex w-full items-center justify-between px-8 py-3">
-        <Link to="/">
+        <Link to="/dashboard">
           <Logo />
         </Link>
 
         <div className="flex items-center gap-6 text-sm text-slate-200/80">
-          <Link to="/" className="hover:text-white">
+          <Link to="/dashboard" className="hover:text-white">
             Dashboard
           </Link>
           <Link to="/budget" className="hover:text-white">

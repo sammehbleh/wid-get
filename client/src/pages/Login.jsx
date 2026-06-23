@@ -27,7 +27,7 @@ export default function Login() {
           ? await api.login(email, password)
           : await api.register(name, email, password);
       login(result.token, result.user);
-      navigate("/");
+      navigate("/dashboard");
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Something went wrong");
     } finally {

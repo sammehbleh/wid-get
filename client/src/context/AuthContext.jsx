@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { api } from "../api/client";
+import { api, ApiError } from "../api/client";
 
 const AuthContext = createContext(null);
 
@@ -16,9 +16,14 @@ export function AuthProvider({ children }) {
     api
       .me(token)
       .then(setUser)
-      .catch(() => {
-        setToken(null);
-        localStorage.removeItem("token");
+      .catch((err) => {
+        // Only treat an actual 401 as "this token is invalid" — a network
+        // blip or aborted request (e.g. navigating away mid-request)
+        // shouldn't silently log the user out.
+        if (err instanceof ApiError && err.status === 401) {
+          setToken(null);
+          localStorage.removeItem("token");
+        }
       })
       .finally(() => setLoading(false));
   }, [token]);
