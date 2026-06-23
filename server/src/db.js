@@ -8,11 +8,29 @@ if (dns.getServers().every((server) => server === "127.0.0.1")) {
   dns.setServers(["8.8.8.8", "1.1.1.1"]);
 }
 
+let connectPromise = null;
+
+// On serverless platforms each invocation can reuse a warm container, so we
+// cache the connection (and the in-flight connect promise) instead of
+// reconnecting — mongoose.connect() on an already-open connection is a no-op,
+// but skipping it entirely avoids redundant work on every warm invocation.
 export async function connectDB() {
+  if (mongoose.connection.readyState === 1) return;
+  if (connectPromise) return connectPromise;
+
   const uri = process.env.MONGODB_URI;
   if (!uri) {
     throw new Error("MONGODB_URI is not set. Copy .env.example to .env and fill it in.");
   }
-  await mongoose.connect(uri);
-  console.log("Connected to MongoDB");
+
+  connectPromise = mongoose.connect(uri).then(() => {
+    console.log("Connected to MongoDB");
+  });
+
+  try {
+    await connectPromise;
+  } catch (err) {
+    connectPromise = null;
+    throw err;
+  }
 }
