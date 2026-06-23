@@ -30,13 +30,13 @@ export default function BudgetCard() {
       ) : (
         <>
           <p className="mt-3 text-2xl font-semibold">
-            ${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+            ₱{total.toLocaleString(undefined, { minimumFractionDigits: 2 })}
           </p>
           <ul className="mt-2 space-y-1">
             {accounts.slice(0, 3).map((a) => (
               <li key={a._id} className="flex justify-between text-xs text-slate-300">
-                <span>{a.bankName}</span>
-                <span>${a.balance.toLocaleString()}</span>
+                <span>{a.name}</span>
+                <span>₱{a.balance.toLocaleString()}</span>
               </li>
             ))}
           </ul>

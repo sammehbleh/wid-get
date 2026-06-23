@@ -9,6 +9,7 @@ import noteRoutes from "./routes/notes.js";
 import reminderRoutes from "./routes/reminders.js";
 import todoRoutes from "./routes/todos.js";
 import eventRoutes from "./routes/events.js";
+import transactionRoutes from "./routes/transactions.js";
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use("/api/notes", noteRoutes);
 app.use("/api/reminders", reminderRoutes);
 app.use("/api/todos", todoRoutes);
 app.use("/api/events", eventRoutes);
+app.use("/api/transactions", transactionRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err);

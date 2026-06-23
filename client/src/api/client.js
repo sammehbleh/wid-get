@@ -34,6 +34,8 @@ export const api = {
 
   listAccounts: (token) => request("/accounts", { token }),
   createAccount: (token, data) => request("/accounts", { method: "POST", body: data, token }),
+  updateAccount: (token, id, data) => request(`/accounts/${id}`, { method: "PATCH", body: data, token }),
+  deleteAccount: (token, id) => request(`/accounts/${id}`, { method: "DELETE", token }),
 
   listReminders: (token) => request("/reminders", { token }),
   createReminder: (token, data) => request("/reminders", { method: "POST", body: data, token }),
@@ -53,4 +55,10 @@ export const api = {
   listEvents: (token) => request("/events", { token }),
   createEvent: (token, data) => request("/events", { method: "POST", body: data, token }),
   deleteEvent: (token, id) => request(`/events/${id}`, { method: "DELETE", token }),
+
+  listTransactions: (token) => request("/transactions", { token }),
+  createTransaction: (token, data) => request("/transactions", { method: "POST", body: data, token }),
+  updateTransaction: (token, id, data) =>
+    request(`/transactions/${id}`, { method: "PATCH", body: data, token }),
+  deleteTransaction: (token, id) => request(`/transactions/${id}`, { method: "DELETE", token }),
 };
