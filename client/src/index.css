@@ -1,0 +1,21 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap");
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, "Segoe UI", Roboto, sans-serif;
+  color: #f1f5f9;
+}
+
+.bg-background-image {
+  background-image: url("./assets/background.jpg");
+}
+
+.font-greeting {
+  font-family: "Fraunces", "Georgia", serif;
+  font-optical-sizing: auto;
+}
