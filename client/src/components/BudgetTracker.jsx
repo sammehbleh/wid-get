@@ -4,13 +4,14 @@ import { BUDGET_CATEGORIES } from "../data/budget";
 import { api } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 import { exportTransactionsCSV, exportTransactionsExcel, parseImportFile } from "../utils/budgetExport";
+import { toLocalDateString } from "../utils/date";
 
 function formatMoney(n) {
   return `₱${Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
 }
 
 const emptyForm = {
-  date: new Date().toISOString().slice(0, 10),
+  date: toLocalDateString(),
   category: "Other",
   description: "",
   income: "",

@@ -91,7 +91,12 @@ function parseCSV(text) {
 }
 
 function normalizeDate(value) {
-  if (value instanceof Date) return value.toISOString().slice(0, 10);
+  if (value instanceof Date) {
+    const y = value.getFullYear();
+    const m = String(value.getMonth() + 1).padStart(2, "0");
+    const d = String(value.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
   return String(value || "").slice(0, 10);
 }
 

@@ -61,4 +61,15 @@ export const api = {
   updateTransaction: (token, id, data) =>
     request(`/transactions/${id}`, { method: "PATCH", body: data, token }),
   deleteTransaction: (token, id) => request(`/transactions/${id}`, { method: "DELETE", token }),
+
+  listBudgetLimits: (token) => request("/budget-limits", { token }),
+  createBudgetLimit: (token, data) => request("/budget-limits", { method: "POST", body: data, token }),
+  updateBudgetLimit: (token, id, data) =>
+    request(`/budget-limits/${id}`, { method: "PATCH", body: data, token }),
+  deleteBudgetLimit: (token, id) => request(`/budget-limits/${id}`, { method: "DELETE", token }),
+
+  listBills: (token) => request("/bills", { token }),
+  createBill: (token, data) => request("/bills", { method: "POST", body: data, token }),
+  updateBill: (token, id, data) => request(`/bills/${id}`, { method: "PATCH", body: data, token }),
+  deleteBill: (token, id) => request(`/bills/${id}`, { method: "DELETE", token }),
 };

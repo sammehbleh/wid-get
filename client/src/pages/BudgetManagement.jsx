@@ -4,7 +4,9 @@ import BackgroundLayer from "../components/BackgroundLayer";
 import BudgetSummary from "../components/BudgetSummary";
 import AccountCard from "../components/AccountCard";
 import BudgetTracker from "../components/BudgetTracker";
-import SpendingInsights from "../components/SpendingInsights";
+import FinancialAnalytics from "../components/FinancialAnalytics";
+import FinancialInsights from "../components/FinancialInsights";
+import UpcomingPayments from "../components/UpcomingPayments";
 import { ACCOUNT_GROUPS } from "../data/accounts";
 import { api } from "../api/client";
 import { useAuth } from "../context/AuthContext";
@@ -13,15 +15,21 @@ export default function BudgetManagement() {
   const { token } = useAuth();
   const [accounts, setAccounts] = useState([]);
   const [transactions, setTransactions] = useState([]);
+  const [budgetLimits, setBudgetLimits] = useState([]);
+  const [bills, setBills] = useState([]);
   const [loaded, setLoaded] = useState(false);
 
   const refresh = useCallback(async () => {
-    const [accountsData, transactionsData] = await Promise.all([
+    const [accountsData, transactionsData, budgetLimitsData, billsData] = await Promise.all([
       api.listAccounts(token),
       api.listTransactions(token),
+      api.listBudgetLimits(token),
+      api.listBills(token),
     ]);
     setAccounts(accountsData);
     setTransactions(transactionsData);
+    setBudgetLimits(budgetLimitsData);
+    setBills(billsData);
     setLoaded(true);
   }, [token]);
 
@@ -70,7 +78,16 @@ export default function BudgetManagement() {
               onChange={refresh}
             />
 
-            <SpendingInsights />
+            <FinancialAnalytics transactions={transactions} />
+
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              <FinancialInsights
+                transactions={transactions}
+                budgetLimits={budgetLimits}
+                onChange={refresh}
+              />
+              <UpcomingPayments bills={bills} onChange={refresh} />
+            </div>
           </>
         )}
       </main>

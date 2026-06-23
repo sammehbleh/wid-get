@@ -10,6 +10,8 @@ import reminderRoutes from "./routes/reminders.js";
 import todoRoutes from "./routes/todos.js";
 import eventRoutes from "./routes/events.js";
 import transactionRoutes from "./routes/transactions.js";
+import budgetLimitRoutes from "./routes/budgetLimits.js";
+import billRoutes from "./routes/bills.js";
 
 const app = express();
 
@@ -24,6 +26,8 @@ app.use("/api/reminders", reminderRoutes);
 app.use("/api/todos", todoRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/transactions", transactionRoutes);
+app.use("/api/budget-limits", budgetLimitRoutes);
+app.use("/api/bills", billRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err);
