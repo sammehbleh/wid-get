@@ -1,8 +1,9 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import GlassCard from "./GlassCard";
 import { BUDGET_CATEGORIES } from "../data/budget";
 import { api } from "../api/client";
 import { useAuth } from "../context/AuthContext";
+import { exportTransactionsCSV, exportTransactionsExcel, parseImportFile } from "../utils/budgetExport";
 
 function formatMoney(n) {
   return `₱${Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
@@ -121,6 +122,31 @@ export default function BudgetTracker({ transactions, startingBalance, accountNa
     onChange();
   }
 
+  const fileInputRef = useRef(null);
+  const [importing, setImporting] = useState(false);
+  const [importMessage, setImportMessage] = useState("");
+
+  async function handleImportFile(e) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    setImporting(true);
+    setImportMessage("");
+    try {
+      const rows = await parseImportFile(file);
+      for (const row of rows) {
+        await api.createTransaction(token, row);
+      }
+      setImportMessage(`Imported ${rows.length} entries.`);
+      onChange();
+    } catch {
+      setImportMessage("Couldn't read that file. Use a .csv or .xlsx exported from here.");
+    } finally {
+      setImporting(false);
+    }
+  }
+
   const totalIncome = transactions.reduce((s, t) => s + (t.income || 0), 0);
   const totalExpense = transactions.reduce((s, t) => s + (t.expense || 0), 0);
 
@@ -128,13 +154,42 @@ export default function BudgetTracker({ transactions, startingBalance, accountNa
     <GlassCard className="flex flex-col p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-sm font-medium text-slate-200">Budget Tracker</h2>
-        <button
-          onClick={startAdd}
-          className="rounded-lg bg-indigo-500 px-3 py-1.5 text-xs font-medium hover:bg-indigo-400"
-        >
-          + Add Entry
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => exportTransactionsCSV(transactions)}
+            className="rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-slate-200 hover:bg-white/10"
+          >
+            Export CSV
+          </button>
+          <button
+            onClick={() => exportTransactionsExcel(transactions)}
+            className="rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-slate-200 hover:bg-white/10"
+          >
+            Export Excel
+          </button>
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={importing}
+            className="rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-slate-200 hover:bg-white/10 disabled:opacity-50"
+          >
+            {importing ? "Importing..." : "Import Data"}
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".csv,.xlsx,.xls"
+            onChange={handleImportFile}
+            className="hidden"
+          />
+          <button
+            onClick={startAdd}
+            className="rounded-lg bg-indigo-500 px-3 py-1.5 text-xs font-medium hover:bg-indigo-400"
+          >
+            + Add Entry
+          </button>
+        </div>
       </div>
+      {importMessage && <p className="mt-2 text-xs text-slate-400">{importMessage}</p>}
 
       <div className="mt-3 flex flex-wrap gap-2">
         <input

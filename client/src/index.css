@@ -19,3 +19,87 @@ body {
   font-family: "Fraunces", "Georgia", serif;
   font-optical-sizing: auto;
 }
+
+/*
+  Light theme overrides every component's glassmorphism utility classes
+  directly (instead of adding dark:/light: variants everywhere) by
+  re-targeting the exact Tailwind classes already used app-wide: white
+  overlays flip to black overlays, and the slate text scale darkens.
+  This keeps every card themed from one place.
+*/
+[data-theme="light"] {
+  color-scheme: light;
+}
+
+[data-theme="light"] body {
+  color: #292524;
+}
+
+/* Bright white overlay, plus a warm neutral (stone) text/surface scale
+   instead of the blue-tinted slate scale. */
+[data-theme="light"] .bg-slate-950\/50 {
+  background-color: rgb(255 255 255 / 0.86);
+}
+
+[data-theme="light"] .bg-white\/\[0\.03\] {
+  background-color: rgb(28 25 23 / 0.04);
+}
+[data-theme="light"] .bg-white\/\[0\.04\] {
+  background-color: rgb(28 25 23 / 0.05);
+}
+[data-theme="light"] .bg-white\/5 {
+  background-color: rgb(28 25 23 / 0.05);
+}
+[data-theme="light"] .bg-white\/10 {
+  background-color: rgb(28 25 23 / 0.07);
+}
+[data-theme="light"] .bg-white\/15 {
+  background-color: rgb(28 25 23 / 0.1);
+}
+[data-theme="light"] .hover\:bg-white\/10:hover {
+  background-color: rgb(28 25 23 / 0.08);
+}
+[data-theme="light"] .hover\:bg-white\/15:hover {
+  background-color: rgb(28 25 23 / 0.12);
+}
+
+[data-theme="light"] .border-white\/5 {
+  border-color: rgb(28 25 23 / 0.06);
+}
+[data-theme="light"] .border-white\/10 {
+  border-color: rgb(28 25 23 / 0.1);
+}
+[data-theme="light"] .border-white\/15 {
+  border-color: rgb(28 25 23 / 0.15);
+}
+[data-theme="light"] .border-white\/30 {
+  border-color: rgb(28 25 23 / 0.25);
+}
+
+[data-theme="light"] .text-white,
+[data-theme="light"] .hover\:text-white:hover {
+  color: #1c1917;
+}
+[data-theme="light"] .text-slate-100 {
+  color: #1c1917;
+}
+[data-theme="light"] .text-slate-200 {
+  color: #292524;
+}
+[data-theme="light"] .text-slate-200\/80 {
+  color: rgb(41 37 36 / 0.8);
+}
+[data-theme="light"] .text-slate-300 {
+  color: #44403c;
+}
+[data-theme="light"] .text-slate-400 {
+  color: #57534e;
+}
+[data-theme="light"] .text-slate-500 {
+  color: #78716c;
+}
+
+[data-theme="light"] ::placeholder {
+  color: #78716c;
+  opacity: 1;
+}

@@ -9,7 +9,7 @@ function toKey(year, month, day) {
   return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
 
-export default function MiniCalendar() {
+export default function MiniCalendar({ className = "" }) {
   const { token } = useAuth();
   const today = new Date();
   const [cursor, setCursor] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
@@ -68,7 +68,7 @@ export default function MiniCalendar() {
   }
 
   return (
-    <GlassCard className="p-5">
+    <GlassCard className={`p-5 ${className}`}>
       <div className="flex items-center justify-between">
         <button onClick={() => changeMonth(-1)} className="px-1 text-slate-300 hover:text-white">
           ‹

@@ -4,7 +4,7 @@ import GlassCard from "./GlassCard";
 import { api } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 
-export default function BudgetCard() {
+export default function BudgetCard({ className = "" }) {
   const { token } = useAuth();
   const [accounts, setAccounts] = useState([]);
 
@@ -18,7 +18,7 @@ export default function BudgetCard() {
     <GlassCard
       as={Link}
       to="/budget"
-      className="block p-5 transition hover:bg-white/15"
+      className={`block p-5 transition hover:bg-white/15 ${className}`}
     >
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-medium text-slate-200">Budget Management</h2>

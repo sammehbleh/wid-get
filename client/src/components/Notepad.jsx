@@ -5,7 +5,13 @@ import { useAuth } from "../context/AuthContext";
 
 const CATEGORIES = ["Personal", "School", "Work", "Ideas", "Finance", "Other"];
 
-export default function Notepad() {
+const SIZE_HEIGHTS = {
+  compact: "min-h-[140px]",
+  normal: "min-h-[220px]",
+  large: "min-h-[420px]",
+};
+
+export default function Notepad({ size = "normal" }) {
   const { token } = useAuth();
   const [notes, setNotes] = useState([]);
   const [activeId, setActiveId] = useState(null);
@@ -104,7 +110,7 @@ export default function Notepad() {
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder="Write your note..."
-        className="mt-3 min-h-[220px] flex-1 resize-none rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm outline-none focus:border-indigo-400"
+        className={`mt-3 ${SIZE_HEIGHTS[size] || SIZE_HEIGHTS.normal} flex-1 resize-none rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm outline-none focus:border-indigo-400`}
       />
 
       <div className="mt-3 flex items-center justify-between">
