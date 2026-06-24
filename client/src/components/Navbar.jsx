@@ -28,6 +28,9 @@ export default function Navbar() {
           <Link to="/budget" className="hover:text-white">
             Budget
           </Link>
+          <Link to="/study" className="hover:text-white">
+            Study
+          </Link>
         </div>
 
         <div className="flex items-center gap-2 sm:gap-4">
@@ -58,6 +61,9 @@ export default function Navbar() {
           </Link>
           <Link to="/budget" className="rounded-lg px-2 py-2 hover:bg-white/10 hover:text-white" onClick={() => setMenuOpen(false)}>
             Budget
+          </Link>
+          <Link to="/study" className="rounded-lg px-2 py-2 hover:bg-white/10 hover:text-white" onClick={() => setMenuOpen(false)}>
+            Study
           </Link>
           {user && <span className="px-2 py-1 text-xs text-slate-400">Signed in as {user.name}</span>}
           <button

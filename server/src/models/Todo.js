@@ -8,6 +8,9 @@ const todoSchema = new mongoose.Schema(
     text: { type: String, required: true },
     priority: { type: String, enum: TODO_PRIORITIES, default: "medium" },
     done: { type: Boolean, default: false },
+    category: { type: String, default: "Other" },
+    deadline: { type: String, default: "" }, // "YYYY-MM-DD"
+    notes: { type: String, default: "" },
     linkExpense: { type: Boolean, default: false },
     expenseAmount: { type: Number, default: 0 },
     expenseCategory: { type: String, default: "Bills" },

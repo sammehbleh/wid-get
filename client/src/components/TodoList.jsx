@@ -4,6 +4,7 @@ import { api } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 import { BUDGET_CATEGORIES } from "../data/budget";
 import { toLocalDateString } from "../utils/date";
+import { TASK_CATEGORIES, detectStudyCategory } from "../data/taskCategories";
 
 const PRIORITIES = [
   { value: "high", label: "High", dot: "bg-rose-500", chip: "border-rose-400/40 bg-rose-500/10 text-rose-300" },
@@ -20,6 +21,8 @@ export default function TodoList({ className = "" }) {
   const [todos, setTodos] = useState([]);
   const [text, setText] = useState("");
   const [priority, setPriority] = useState("medium");
+  const [category, setCategory] = useState("Other");
+  const [categoryTouched, setCategoryTouched] = useState(false);
 
   const [linkExpense, setLinkExpense] = useState(false);
   const [expenseAmount, setExpenseAmount] = useState("");
@@ -30,12 +33,21 @@ export default function TodoList({ className = "" }) {
     api.listTodos(token).then(setTodos).catch(() => setTodos([]));
   }, [token]);
 
+  function handleTextChange(value) {
+    setText(value);
+    if (!categoryTouched) {
+      const suggestion = detectStudyCategory(value);
+      if (suggestion) setCategory(suggestion);
+    }
+  }
+
   async function addTodo(e) {
     e.preventDefault();
     if (!text.trim()) return;
     const created = await api.createTodo(token, {
       text: text.trim(),
       priority,
+      category,
       linkExpense,
       expenseAmount: linkExpense ? Number(expenseAmount) || 0 : 0,
       expenseCategory,
@@ -43,6 +55,8 @@ export default function TodoList({ className = "" }) {
     });
     setTodos((prev) => [created, ...prev]);
     setText("");
+    setCategory("Other");
+    setCategoryTouched(false);
     setLinkExpense(false);
     setExpenseAmount("");
     setExpensePaymentSource("");
@@ -80,7 +94,7 @@ export default function TodoList({ className = "" }) {
       <form onSubmit={addTodo} className="mt-3 space-y-2">
         <input
           value={text}
-          onChange={(e) => setText(e.target.value)}
+          onChange={(e) => handleTextChange(e.target.value)}
           placeholder="Add a task..."
           className="w-full min-w-0 rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-sm outline-none focus:border-indigo-400"
         />
@@ -93,6 +107,20 @@ export default function TodoList({ className = "" }) {
             {PRIORITIES.map((p) => (
               <option key={p.value} value={p.value} className="bg-slate-800">
                 {p.label}
+              </option>
+            ))}
+          </select>
+          <select
+            value={category}
+            onChange={(e) => {
+              setCategory(e.target.value);
+              setCategoryTouched(true);
+            }}
+            className="min-w-0 flex-1 rounded-lg border border-white/15 bg-white/10 px-2 py-1.5 text-sm text-slate-200 outline-none focus:border-indigo-400"
+          >
+            {TASK_CATEGORIES.map((c) => (
+              <option key={c} value={c} className="bg-slate-800">
+                {c}
               </option>
             ))}
           </select>
@@ -174,6 +202,11 @@ export default function TodoList({ className = "" }) {
                 )}
               </label>
               <div className="flex items-center gap-2">
+                {t.category && t.category !== "Other" && (
+                  <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] text-slate-300">
+                    {t.category}
+                  </span>
+                )}
                 <span className={`rounded-full border px-2 py-0.5 text-[10px] ${meta.chip}`}>
                   {meta.label}
                 </span>

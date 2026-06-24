@@ -20,6 +20,22 @@ body {
   font-optical-sizing: auto;
 }
 
+@keyframes flip-digit {
+  0% {
+    transform: rotateX(90deg);
+    opacity: 0.4;
+  }
+  100% {
+    transform: rotateX(0deg);
+    opacity: 1;
+  }
+}
+.animate-flip-digit {
+  display: inline-block;
+  animation: flip-digit 0.35s ease-out;
+  transform-origin: 50% 0%;
+}
+
 @keyframes landing-drift-a {
   0%, 100% { transform: translate(0, 0) scale(1); }
   50% { transform: translate(4%, 6%) scale(1.08); }
