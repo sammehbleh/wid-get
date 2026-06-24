@@ -72,7 +72,7 @@ export default function AccountCard({ type, title, accounts, onChange }) {
         <span className="text-sm font-semibold text-slate-100">{formatMoney(total)}</span>
       </div>
 
-      <ul className="mt-3 space-y-2">
+      <ul className="thin-scroll mt-3 min-h-0 flex-1 space-y-2 overflow-y-auto">
         {accounts.length === 0 && <li className="text-xs text-slate-400">No accounts yet</li>}
         {accounts.map((a) => (
           <li

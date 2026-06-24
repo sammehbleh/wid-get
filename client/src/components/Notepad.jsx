@@ -6,12 +6,12 @@ import { useAuth } from "../context/AuthContext";
 const CATEGORIES = ["Personal", "School", "Work", "Ideas", "Finance", "Other"];
 
 const SIZE_HEIGHTS = {
-  compact: "min-h-[140px]",
-  normal: "min-h-[220px]",
-  large: "min-h-[420px]",
+  compact: "min-h-[200px]",
+  normal: "min-h-[360px]",
+  large: "min-h-[560px]",
 };
 
-export default function Notepad({ size = "normal" }) {
+export default function Notepad({ size = "normal", className = "" }) {
   const { token } = useAuth();
   const [notes, setNotes] = useState([]);
   const [activeId, setActiveId] = useState(null);
@@ -62,7 +62,7 @@ export default function Notepad({ size = "normal" }) {
   }
 
   return (
-    <GlassCard className="flex h-full flex-col p-5">
+    <GlassCard className={`flex flex-col p-5 ${className}`}>
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-medium text-slate-200">Notepad</h2>
         <button onClick={newNote} className="text-xs text-indigo-300 hover:text-indigo-200">
@@ -110,7 +110,7 @@ export default function Notepad({ size = "normal" }) {
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder="Write your note..."
-        className={`mt-3 ${SIZE_HEIGHTS[size] || SIZE_HEIGHTS.normal} flex-1 resize-none rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm outline-none focus:border-indigo-400`}
+        className={`mt-3 ${SIZE_HEIGHTS[size] || SIZE_HEIGHTS.normal} thin-scroll min-h-0 flex-1 resize-none rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm outline-none focus:border-indigo-400`}
       />
 
       <div className="mt-3 flex items-center justify-between">

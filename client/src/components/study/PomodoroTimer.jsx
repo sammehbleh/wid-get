@@ -11,7 +11,7 @@ function formatTime(ms) {
   return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
 
-export default function PomodoroTimer({ timer, currentTaskText, compact = false }) {
+export default function PomodoroTimer({ timer, currentTaskText, large = false, className = "" }) {
   const [showSettings, setShowSettings] = useState(false);
 
   const totalMs =
@@ -23,24 +23,26 @@ export default function PomodoroTimer({ timer, currentTaskText, compact = false 
     60 *
     1000;
   const progress = 1 - timer.remainingMs / totalMs;
-  const circumference = 2 * Math.PI * 88;
+  const radius = large ? 108 : 88;
+  const circumference = 2 * Math.PI * radius;
+  const ringSize = large ? "h-60 w-60" : "h-48 w-48";
 
   return (
-    <GlassCard className={`flex flex-col items-center p-6 ${compact ? "" : ""}`}>
+    <GlassCard className={`flex flex-col items-center p-6 ${large ? "glass-strong" : ""} ${className}`}>
       <p className="text-xs font-medium uppercase tracking-wide text-slate-400">{PHASE_LABEL[timer.phase]}</p>
       {currentTaskText && (
         <p className="mt-1 max-w-xs truncate text-center text-xs text-indigo-300">{currentTaskText}</p>
       )}
 
-      <div className="relative mt-4 h-48 w-48">
-        <svg viewBox="0 0 200 200" className="h-full w-full -rotate-90">
-          <circle cx="100" cy="100" r="88" fill="none" strokeWidth="10" className="stroke-white/10" />
+      <div className={`relative mt-4 ${ringSize}`}>
+        <svg viewBox="0 0 240 240" className="h-full w-full -rotate-90">
+          <circle cx="120" cy="120" r={radius} fill="none" strokeWidth="11" className="stroke-white/10" />
           <circle
-            cx="100"
-            cy="100"
-            r="88"
+            cx="120"
+            cy="120"
+            r={radius}
             fill="none"
-            strokeWidth="10"
+            strokeWidth="11"
             strokeLinecap="round"
             className={`${PHASE_RING[timer.phase]} transition-all duration-300`}
             strokeDasharray={circumference}
@@ -48,7 +50,7 @@ export default function PomodoroTimer({ timer, currentTaskText, compact = false 
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="font-greeting text-4xl font-bold tabular-nums text-white">
+          <span className={`font-greeting font-bold tabular-nums text-white ${large ? "text-5xl" : "text-4xl"}`}>
             {formatTime(timer.remainingMs)}
           </span>
           <span className="mt-1 text-xs text-slate-400">Session {timer.sessionNumber}</span>

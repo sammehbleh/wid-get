@@ -93,7 +93,7 @@ export default function ReminderCard({ className = "" }) {
         )}
       </form>
 
-      <ul className="mt-3 min-h-0 flex-1 space-y-2 overflow-y-auto">
+      <ul className="thin-scroll mt-3 max-h-56 space-y-2 overflow-y-auto">
         {reminders.length === 0 && (
           <li className="text-xs text-slate-400">No reminders yet</li>
         )}

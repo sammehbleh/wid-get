@@ -205,7 +205,7 @@ export default function SavingsGoals({ goals, onChange }) {
         </form>
       )}
 
-      <ul className="mt-3 space-y-3">
+      <ul className="thin-scroll mt-3 max-h-[420px] space-y-3 overflow-y-auto">
         {goals.length === 0 && <li className="text-xs text-slate-400">No savings goals yet</li>}
         {goals.map((goal) => (
           <GoalRow key={goal._id} goal={goal} onDeposit={deposit} onEdit={startEdit} onRemove={remove} />

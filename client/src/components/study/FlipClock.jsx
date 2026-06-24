@@ -12,7 +12,7 @@ function useClock() {
   return now;
 }
 
-function ClockFace({ now, size = "text-5xl" }) {
+function ClockFace({ now, size = "text-5xl", dateSize = "text-sm" }) {
   const h = String(now.getHours()).padStart(2, "0");
   const m = String(now.getMinutes()).padStart(2, "0");
   const s = String(now.getSeconds()).padStart(2, "0");
@@ -20,7 +20,7 @@ function ClockFace({ now, size = "text-5xl" }) {
 
   return (
     <div className="flex flex-col items-center">
-      <div className={`font-greeting flex gap-1 ${size} font-bold tabular-nums text-white [perspective:400px]`}>
+      <div className={`font-greeting flex gap-1 sm:gap-2 ${size} font-bold tabular-nums text-white [perspective:600px]`}>
         {[...h].map((d, i) => (
           <FlipDigit key={`h${i}`} value={d} />
         ))}
@@ -33,12 +33,12 @@ function ClockFace({ now, size = "text-5xl" }) {
           <FlipDigit key={`s${i}`} value={d} />
         ))}
       </div>
-      <p className="mt-3 text-sm text-slate-300">{dateStr}</p>
+      <p className={`mt-4 ${dateSize} text-slate-300`}>{dateStr}</p>
     </div>
   );
 }
 
-export default function FlipClock({ fullscreenContent }) {
+export default function FlipClock({ fullscreenContent, large = false, className = "" }) {
   const now = useClock();
   const [fullscreen, setFullscreen] = useState(false);
 
@@ -53,11 +53,13 @@ export default function FlipClock({ fullscreenContent }) {
 
   return (
     <>
-      <GlassCard className="flex flex-col items-center p-6">
-        <ClockFace now={now} />
+      <GlassCard
+        className={`flex flex-col items-center justify-center p-6 ${large ? "glass-strong" : ""} ${className}`}
+      >
+        <ClockFace now={now} size={large ? "text-6xl sm:text-7xl" : "text-5xl"} />
         <button
           onClick={() => setFullscreen(true)}
-          className="mt-4 rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-slate-200 hover:bg-white/10"
+          className="mt-5 rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-slate-200 hover:bg-white/10"
         >
           Fullscreen
         </button>
@@ -72,7 +74,7 @@ export default function FlipClock({ fullscreenContent }) {
           >
             Exit Fullscreen
           </button>
-          <ClockFace now={now} size="text-6xl sm:text-7xl" />
+          <ClockFace now={now} size="text-7xl sm:text-8xl lg:text-9xl" dateSize="text-lg sm:text-xl" />
           <div className="w-full max-w-sm">{fullscreenContent}</div>
         </div>
       )}

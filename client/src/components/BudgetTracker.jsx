@@ -319,9 +319,9 @@ export default function BudgetTracker({ transactions, startingBalance, accountNa
         </form>
       )}
 
-      <div className="mt-4 overflow-x-auto">
+      <div className="thin-scroll mt-4 max-h-[480px] overflow-auto">
         <table className="w-full min-w-[820px] text-left text-sm">
-          <thead>
+          <thead className="sticky top-0 z-10 bg-white/5 backdrop-blur-sm">
             <tr className="border-b border-white/10 text-xs uppercase tracking-wide text-slate-400">
               <th className="py-2 pr-3 font-medium">Date</th>
               <th className="py-2 pr-3 font-medium">Category</th>

@@ -56,7 +56,7 @@ export default function FinancialInsights({ transactions, budgetLimits, onChange
     <GlassCard className="flex flex-col p-5">
       <h2 className="text-sm font-medium text-slate-200">Financial Insights</h2>
 
-      <ul className="mt-3 space-y-2">
+      <ul className="thin-scroll mt-3 max-h-32 space-y-2 overflow-y-auto">
         {insights.length === 0 && (
           <li className="text-xs text-slate-400">
             Not enough data yet — log a few transactions to see insights here.
@@ -72,9 +72,9 @@ export default function FinancialInsights({ transactions, budgetLimits, onChange
         ))}
       </ul>
 
-      <div className="mt-4 border-t border-white/10 pt-3">
+      <div className="mt-4 flex min-h-0 flex-1 flex-col border-t border-white/10 pt-3">
         <p className="text-xs font-medium text-slate-300">Budget Limits</p>
-        <ul className="mt-2 space-y-3">
+        <ul className="thin-scroll mt-2 min-h-0 flex-1 space-y-3 overflow-y-auto">
           {budgetLimits.length === 0 && (
             <li className="text-xs text-slate-400">No limits set yet</li>
           )}

@@ -158,7 +158,7 @@ export default function StudyTaskList({ tasks, onChange, onSelectCurrent, curren
         </form>
       )}
 
-      <ul className="mt-3 min-h-0 flex-1 space-y-2 overflow-y-auto">
+      <ul className="thin-scroll mt-3 max-h-64 space-y-2 overflow-y-auto">
         {tasks.length === 0 && (
           <li className="text-xs text-slate-400">No study tasks yet — add one above.</li>
         )}

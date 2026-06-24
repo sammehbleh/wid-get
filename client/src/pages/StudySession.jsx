@@ -7,6 +7,8 @@ import PomodoroTimer from "../components/study/PomodoroTimer";
 import FlipClock from "../components/study/FlipClock";
 import AudioPlayerCard from "../components/study/AudioPlayerCard";
 import StudyStats from "../components/study/StudyStats";
+import MotivationalQuoteWidget from "../components/study/MotivationalQuoteWidget";
+import CurrentFocusWidget from "../components/study/CurrentFocusWidget";
 import { usePomodoroTimer } from "../hooks/usePomodoroTimer";
 import { isStudyCategory } from "../data/taskCategories";
 import { randomStudyQuote } from "../data/studyQuotes";
@@ -62,13 +64,8 @@ export default function StudySession() {
       <Navbar />
 
       <main className="flex w-full flex-1 flex-col px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-        <header className="mb-6 flex flex-wrap items-start justify-between gap-4 sm:mb-8">
-          <div>
-            <h1 className="font-greeting text-3xl font-bold tracking-tight sm:text-4xl">Study Session</h1>
-            <p className="mt-2 max-w-xl text-sm italic text-slate-300 transition-opacity sm:text-base">
-              "{quote}"
-            </p>
-          </div>
+        <header className="mb-6 flex flex-wrap items-center justify-between gap-4">
+          <h1 className="font-greeting text-3xl font-bold tracking-tight sm:text-4xl">Study Session</h1>
           <button
             onClick={() => setFocusMode((v) => !v)}
             className={`rounded-lg border px-4 py-2 text-sm font-medium transition ${
@@ -82,37 +79,40 @@ export default function StudySession() {
         </header>
 
         {loaded && (
-          <div
-            className={`grid flex-1 grid-cols-1 gap-6 ${
-              focusMode ? "lg:grid-cols-1" : "lg:grid-cols-[340px_1fr_340px]"
-            }`}
-          >
-            {!focusMode && (
-              <div className="flex flex-col gap-6">
-                <StudyTaskList
-                  tasks={studyTasks}
-                  onChange={refresh}
-                  onSelectCurrent={selectCurrent}
-                  currentTaskId={currentTaskId}
-                />
-                <StudyReminders reminders={studyReminders} onChange={refresh} />
-              </div>
-            )}
-
-            <div className={`flex flex-col gap-6 ${focusMode ? "mx-auto w-full max-w-md" : ""}`}>
-              <FlipClock fullscreenContent={<PomodoroTimer timer={timer} currentTaskText={currentTask?.text} />} />
-              <PomodoroTimer timer={timer} currentTaskText={currentTask?.text} />
+          <div className="flex flex-col gap-6">
+            {/* Top: the two dominant components */}
+            <div className={`grid grid-cols-1 gap-6 lg:grid-cols-2 ${focusMode ? "mx-auto w-full max-w-4xl" : ""}`}>
+              <FlipClock
+                large
+                fullscreenContent={<PomodoroTimer timer={timer} currentTaskText={currentTask?.text} />}
+              />
+              <PomodoroTimer large timer={timer} currentTaskText={currentTask?.text} />
             </div>
 
             {!focusMode && (
-              <div className="flex flex-col gap-6">
-                <AudioPlayerCard />
-                <StudyStats timer={timer} completedTaskCount={completedTaskCount} />
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <div className="flex flex-col gap-6">
+                  <StudyTaskList
+                    tasks={studyTasks}
+                    onChange={refresh}
+                    onSelectCurrent={selectCurrent}
+                    currentTaskId={currentTaskId}
+                  />
+                  <StudyReminders reminders={studyReminders} onChange={refresh} />
+                  <StudyStats timer={timer} completedTaskCount={completedTaskCount} />
+                </div>
+
+                <div className="flex flex-col gap-6">
+                  <AudioPlayerCard />
+                  <MotivationalQuoteWidget quote={quote} />
+                  <CurrentFocusWidget task={currentTask} timer={timer} />
+                </div>
               </div>
             )}
 
             {focusMode && (
-              <div className="mx-auto w-full max-w-md">
+              <div className="mx-auto grid w-full max-w-4xl grid-cols-1 gap-6 sm:grid-cols-2">
+                <CurrentFocusWidget task={currentTask} timer={timer} />
                 <AudioPlayerCard />
               </div>
             )}

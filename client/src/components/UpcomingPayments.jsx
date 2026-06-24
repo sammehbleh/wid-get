@@ -157,7 +157,7 @@ export default function UpcomingPayments({ bills, onChange }) {
         </form>
       )}
 
-      <div className="mt-3 space-y-4">
+      <div className="thin-scroll mt-3 min-h-0 flex-1 space-y-4 overflow-y-auto">
         {overdue.length === 0 && tomorrow.length === 0 && thisWeek.length === 0 && (
           <p className="text-xs text-slate-400">No upcoming payments — you're all caught up.</p>
         )}

@@ -99,7 +99,7 @@ export default function StudyReminders({ reminders, onChange }) {
         </form>
       )}
 
-      <ul className="mt-3 space-y-2">
+      <ul className="thin-scroll mt-3 max-h-44 space-y-2 overflow-y-auto">
         {reminders.length === 0 && <li className="text-xs text-slate-400">No study reminders yet</li>}
         {reminders.map((r) => {
           const remaining = timeRemaining(r.dueDate);

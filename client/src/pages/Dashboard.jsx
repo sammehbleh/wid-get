@@ -101,9 +101,7 @@ export default function Dashboard() {
           <div className="grid flex-1 grid-cols-1 gap-6 lg:grid-cols-[320px_1fr_320px]">
             <DashboardColumn id="left" items={layout.left} editMode={editMode} onHide={hideWidget} />
 
-            <div className="h-full min-h-0">
-              <Notepad size={layout.notepadSize} />
-            </div>
+            <Notepad size={layout.notepadSize} className="h-full" />
 
             <DashboardColumn id="right" items={layout.right} editMode={editMode} onHide={hideWidget} />
           </div>
